@@ -97,6 +97,13 @@ std::vector<SolarFlare> flares;
 Satelite luna = { 2.0f, 0.3f, 0.5f, 0.0f, 0 };         // Tierra
 Satelite fobos = { 1.2f, 0.2f, 0.8f, 0.0f, 0 };        // Marte
 Satelite deimos = { 2.0f, 0.15f, 0.5f, 0.0f, 0 };      // Marte
+Satelite mercurioMoon = { 1.1f, 0.1f, 0.8f, 0.0f, 0 }; // Mercurio
+Satelite venusMoon    = { 1.4f, 0.1f, 0.6f, 0.0f, 0 }; // Venus
+Satelite jupiterMoon  = { 6.0f, 0.4f, 0.3f, 0.0f, 0 }; // Jupiter
+Satelite saturnoMoon  = { 5.5f, 0.4f, 0.25f, 0.0f, 0 }; // Saturno
+Satelite uranoMoon    = { 4.0f, 0.3f, 0.2f, 0.0f, 0 }; // Urano
+Satelite neptunoMoon  = { 3.5f, 0.3f, 0.2f, 0.0f, 0 }; // Neptuno
+Satelite plutonMoon   = { 1.2f, 0.15f, 0.15f, 0.0f, 0 }; // Plutón
 
 
 
@@ -367,23 +374,24 @@ void display() {
     gluDeleteQuadric(qSol);
     glPopMatrix();
 
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    for (const auto& f : flares) {
-        glPushMatrix();
-        glRotatef(f.angle, 0, 1, 0);
-        glBegin(GL_TRIANGLES);
-        glColor4f(1.0f, 0.5f, 0.0f, f.life);
-        glVertex3f(10.0f, 0.0f, 0.0f);
-        glColor4f(1.0f, 0.5f, 0.0f, 0.0f);
-        glVertex3f(10.0f + f.length, 2.0f, 0.0f);
-        glVertex3f(10.0f + f.length, -2.0f, 0.0f);
-        glEnd();
-        glPopMatrix();
-    }
-    glDisable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
+    // Se deshabilitan las llamaradas solares para simplificar la escena
+    // glDisable(GL_TEXTURE_2D);
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    // for (const auto& f : flares) {
+    //     glPushMatrix();
+    //     glRotatef(f.angle, 0, 1, 0);
+    //     glBegin(GL_TRIANGLES);
+    //     glColor4f(1.0f, 0.5f, 0.0f, f.life);
+    //     glVertex3f(10.0f, 0.0f, 0.0f);
+    //     glColor4f(1.0f, 0.5f, 0.0f, 0.0f);
+    //     glVertex3f(10.0f + f.length, 2.0f, 0.0f);
+    //     glVertex3f(10.0f + f.length, -2.0f, 0.0f);
+    //     glEnd();
+    //     glPopMatrix();
+    // }
+    // glDisable(GL_BLEND);
+    // glEnable(GL_TEXTURE_2D);
 
     GLfloat no_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     glMaterialfv(GL_FRONT, GL_EMISSION, no_emission);
@@ -530,19 +538,20 @@ void idle() {
     if (anguloSol >= 360.0f) anguloSol -= 360.0f;
     if (anguloTierra >= 360.0f) anguloTierra -= 360.0f;
 
-    for (auto& f : flares) {
-        f.life -= 0.02f;
-    }
-    flares.erase(std::remove_if(flares.begin(), flares.end(),
-        [](const SolarFlare& f) { return f.life <= 0.0f; }), flares.end());
+    // Llamaradas solares desactivadas
+    // for (auto& f : flares) {
+    //     f.life -= 0.02f;
+    // }
+    // flares.erase(std::remove_if(flares.begin(), flares.end(),
+    //     [](const SolarFlare& f) { return f.life <= 0.0f; }), flares.end());
 
-    if (rand() % 100 < 3) {
-        SolarFlare f;
-        f.angle = static_cast<float>(rand()) / RAND_MAX * 360.0f;
-        f.length = 4.0f + static_cast<float>(rand()) / RAND_MAX * 4.0f;
-        f.life = 1.0f;
-        flares.push_back(f);
-    }
+    // if (rand() % 100 < 3) {
+    //     SolarFlare f;
+    //     f.angle = static_cast<float>(rand()) / RAND_MAX * 360.0f;
+    //     f.length = 4.0f + static_cast<float>(rand()) / RAND_MAX * 4.0f;
+    //     f.life = 1.0f;
+    //     flares.push_back(f);
+    // }
 
     for (auto& p : planetas) {
         p.angulo += p.velocidad;
@@ -601,6 +610,13 @@ int main(int argc, char** argv) {
     luna.textura = LoadBMP("../assets/SLuna.bmp");
     fobos.textura = LoadBMP("../assets/SPhobos.bmp");
     deimos.textura = LoadBMP("../assets/SDeimos.bmp");
+    mercurioMoon.textura = luna.textura;
+    venusMoon.textura = luna.textura;
+    jupiterMoon.textura = luna.textura;
+    saturnoMoon.textura = luna.textura;
+    uranoMoon.textura = luna.textura;
+    neptunoMoon.textura = luna.textura;
+    plutonMoon.textura = luna.textura;
 
 
     planetas.push_back({ "Mercurio", 12.0f, 0.7f, 0.45f, LoadBMP("../assets/PMercurio.bmp"), 0.0f, 0.5f });
@@ -620,12 +636,33 @@ int main(int argc, char** argv) {
 
     // === ASIGNAR SATÉLITES A PLANETAS ===
     for (auto& p : planetas) {
+        if (p.nombre == "Mercurio") {
+            p.satelites.push_back(mercurioMoon);
+        }
+        if (p.nombre == "Venus") {
+            p.satelites.push_back(venusMoon);
+        }
         if (p.nombre == "Tierra") {
             p.satelites.push_back(luna);
         }
         if (p.nombre == "Marte") {
             p.satelites.push_back(fobos);
             p.satelites.push_back(deimos);
+        }
+        if (p.nombre == "Jupiter") {
+            p.satelites.push_back(jupiterMoon);
+        }
+        if (p.nombre == "Saturno") {
+            p.satelites.push_back(saturnoMoon);
+        }
+        if (p.nombre == "Urano") {
+            p.satelites.push_back(uranoMoon);
+        }
+        if (p.nombre == "Neptuno") {
+            p.satelites.push_back(neptunoMoon);
+        }
+        if (p.nombre == "Pluton") {
+            p.satelites.push_back(plutonMoon);
         }
     }
 
