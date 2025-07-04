@@ -87,6 +87,7 @@ struct SolarFlare {
     float angle;
     float length;
     float life;
+    float pitch;
 };
 
 
@@ -373,12 +374,13 @@ void display() {
     for (const auto& f : flares) {
         glPushMatrix();
         glRotatef(f.angle, 0, 1, 0);
+        glRotatef(f.pitch, 0, 0, 1);
         glBegin(GL_TRIANGLES);
         glColor4f(1.0f, 0.5f, 0.0f, f.life);
         glVertex3f(10.0f, 0.0f, 0.0f);
         glColor4f(1.0f, 0.5f, 0.0f, 0.0f);
-        glVertex3f(10.0f + f.length, 2.0f, 0.0f);
-        glVertex3f(10.0f + f.length, -2.0f, 0.0f);
+        glVertex3f(10.0f + f.length, 1.0f, 0.0f);
+        glVertex3f(10.0f + f.length, -1.0f, 0.0f);
         glEnd();
         glPopMatrix();
     }
@@ -531,15 +533,16 @@ void idle() {
     if (anguloTierra >= 360.0f) anguloTierra -= 360.0f;
 
     for (auto& f : flares) {
-        f.life -= 0.02f;
+        f.life -= 0.04f;
     }
     flares.erase(std::remove_if(flares.begin(), flares.end(),
         [](const SolarFlare& f) { return f.life <= 0.0f; }), flares.end());
 
-    if (rand() % 100 < 3) {
+    if (rand() % 100 < 20) {
         SolarFlare f;
         f.angle = static_cast<float>(rand()) / RAND_MAX * 360.0f;
-        f.length = 4.0f + static_cast<float>(rand()) / RAND_MAX * 4.0f;
+        f.pitch = -90.0f + static_cast<float>(rand()) / RAND_MAX * 180.0f;
+        f.length = 1.0f + static_cast<float>(rand()) / RAND_MAX * 2.0f;
         f.life = 1.0f;
         flares.push_back(f);
     }
