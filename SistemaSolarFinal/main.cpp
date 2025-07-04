@@ -83,9 +83,16 @@ struct Asteroide {
     float tamano;
 };
 
+struct SolarFlare {
+    float angle;
+    float length;
+    float life;
+};
+
 
 std::vector<Planeta> planetas;
 std::vector<Asteroide> asteroides;
+std::vector<SolarFlare> flares;
 
 Satelite luna = { 2.0f, 0.3f, 0.5f, 0.0f, 0 };         // Tierra
 Satelite fobos = { 1.2f, 0.2f, 0.8f, 0.0f, 0 };        // Marte
@@ -360,6 +367,24 @@ void display() {
     gluDeleteQuadric(qSol);
     glPopMatrix();
 
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    for (const auto& f : flares) {
+        glPushMatrix();
+        glRotatef(f.angle, 0, 1, 0);
+        glBegin(GL_TRIANGLES);
+        glColor4f(1.0f, 0.5f, 0.0f, f.life);
+        glVertex3f(10.0f, 0.0f, 0.0f);
+        glColor4f(1.0f, 0.5f, 0.0f, 0.0f);
+        glVertex3f(10.0f + f.length, 2.0f, 0.0f);
+        glVertex3f(10.0f + f.length, -2.0f, 0.0f);
+        glEnd();
+        glPopMatrix();
+    }
+    glDisable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
+
     GLfloat no_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     glMaterialfv(GL_FRONT, GL_EMISSION, no_emission);
 
@@ -504,6 +529,20 @@ void idle() {
 
     if (anguloSol >= 360.0f) anguloSol -= 360.0f;
     if (anguloTierra >= 360.0f) anguloTierra -= 360.0f;
+
+    for (auto& f : flares) {
+        f.life -= 0.02f;
+    }
+    flares.erase(std::remove_if(flares.begin(), flares.end(),
+        [](const SolarFlare& f) { return f.life <= 0.0f; }), flares.end());
+
+    if (rand() % 100 < 3) {
+        SolarFlare f;
+        f.angle = static_cast<float>(rand()) / RAND_MAX * 360.0f;
+        f.length = 4.0f + static_cast<float>(rand()) / RAND_MAX * 4.0f;
+        f.life = 1.0f;
+        flares.push_back(f);
+    }
 
     for (auto& p : planetas) {
         p.angulo += p.velocidad;
