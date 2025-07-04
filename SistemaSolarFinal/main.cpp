@@ -98,6 +98,12 @@ Satelite luna = { 2.0f, 0.3f, 0.5f, 0.0f, 0 };         // Tierra
 Satelite fobos = { 1.2f, 0.2f, 0.8f, 0.0f, 0 };        // Marte
 Satelite deimos = { 2.0f, 0.15f, 0.5f, 0.0f, 0 };      // Marte
 
+const int MOONS_JUPITER = 79;
+const int MOONS_SATURNO = 83;
+const int MOONS_URANO   = 27;
+const int MOONS_NEPTUNO = 14;
+const int MOONS_PLUTON  = 5;
+
 
 
 GLuint LoadBMP(const char* filename) {
@@ -133,6 +139,19 @@ GLuint LoadBMP(const char* filename) {
 
     delete[] data;
     return textureID;
+}
+
+Satelite crearLuna(float distBase, float distVar,
+                   float radioBase, float radioVar,
+                   float velBase, float velVar,
+                   GLuint textura) {
+    Satelite s;
+    s.distancia = distBase + static_cast<float>(rand()) / RAND_MAX * distVar;
+    s.radio = radioBase + static_cast<float>(rand()) / RAND_MAX * radioVar;
+    s.velocidad = velBase + static_cast<float>(rand()) / RAND_MAX * velVar;
+    s.angulo = static_cast<float>(rand()) / RAND_MAX * 360.0f;
+    s.textura = textura;
+    return s;
 }
 
 // ------------------------
@@ -367,23 +386,24 @@ void display() {
     gluDeleteQuadric(qSol);
     glPopMatrix();
 
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    for (const auto& f : flares) {
-        glPushMatrix();
-        glRotatef(f.angle, 0, 1, 0);
-        glBegin(GL_TRIANGLES);
-        glColor4f(1.0f, 0.5f, 0.0f, f.life);
-        glVertex3f(10.0f, 0.0f, 0.0f);
-        glColor4f(1.0f, 0.5f, 0.0f, 0.0f);
-        glVertex3f(10.0f + f.length, 2.0f, 0.0f);
-        glVertex3f(10.0f + f.length, -2.0f, 0.0f);
-        glEnd();
-        glPopMatrix();
-    }
-    glDisable(GL_BLEND);
-    glEnable(GL_TEXTURE_2D);
+    // Se deshabilitan las llamaradas solares para simplificar la escena
+    // glDisable(GL_TEXTURE_2D);
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    // for (const auto& f : flares) {
+    //     glPushMatrix();
+    //     glRotatef(f.angle, 0, 1, 0);
+    //     glBegin(GL_TRIANGLES);
+    //     glColor4f(1.0f, 0.5f, 0.0f, f.life);
+    //     glVertex3f(10.0f, 0.0f, 0.0f);
+    //     glColor4f(1.0f, 0.5f, 0.0f, 0.0f);
+    //     glVertex3f(10.0f + f.length, 2.0f, 0.0f);
+    //     glVertex3f(10.0f + f.length, -2.0f, 0.0f);
+    //     glEnd();
+    //     glPopMatrix();
+    // }
+    // glDisable(GL_BLEND);
+    // glEnable(GL_TEXTURE_2D);
 
     GLfloat no_emission[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     glMaterialfv(GL_FRONT, GL_EMISSION, no_emission);
@@ -530,19 +550,20 @@ void idle() {
     if (anguloSol >= 360.0f) anguloSol -= 360.0f;
     if (anguloTierra >= 360.0f) anguloTierra -= 360.0f;
 
-    for (auto& f : flares) {
-        f.life -= 0.02f;
-    }
-    flares.erase(std::remove_if(flares.begin(), flares.end(),
-        [](const SolarFlare& f) { return f.life <= 0.0f; }), flares.end());
+    // Llamaradas solares desactivadas
+    // for (auto& f : flares) {
+    //     f.life -= 0.02f;
+    // }
+    // flares.erase(std::remove_if(flares.begin(), flares.end(),
+    //     [](const SolarFlare& f) { return f.life <= 0.0f; }), flares.end());
 
-    if (rand() % 100 < 3) {
-        SolarFlare f;
-        f.angle = static_cast<float>(rand()) / RAND_MAX * 360.0f;
-        f.length = 4.0f + static_cast<float>(rand()) / RAND_MAX * 4.0f;
-        f.life = 1.0f;
-        flares.push_back(f);
-    }
+    // if (rand() % 100 < 3) {
+    //     SolarFlare f;
+    //     f.angle = static_cast<float>(rand()) / RAND_MAX * 360.0f;
+    //     f.length = 4.0f + static_cast<float>(rand()) / RAND_MAX * 4.0f;
+    //     f.life = 1.0f;
+    //     flares.push_back(f);
+    // }
 
     for (auto& p : planetas) {
         p.angulo += p.velocidad;
@@ -623,9 +644,34 @@ int main(int argc, char** argv) {
         if (p.nombre == "Tierra") {
             p.satelites.push_back(luna);
         }
-        if (p.nombre == "Marte") {
+        else if (p.nombre == "Marte") {
             p.satelites.push_back(fobos);
             p.satelites.push_back(deimos);
+        }
+        else if (p.nombre == "Jupiter") {
+            for (int i = 0; i < MOONS_JUPITER; ++i) {
+                p.satelites.push_back(crearLuna(6.0f, 5.0f, 0.15f, 0.15f, 0.1f, 0.2f, luna.textura));
+            }
+        }
+        else if (p.nombre == "Saturno") {
+            for (int i = 0; i < MOONS_SATURNO; ++i) {
+                p.satelites.push_back(crearLuna(5.5f, 5.0f, 0.15f, 0.15f, 0.1f, 0.2f, luna.textura));
+            }
+        }
+        else if (p.nombre == "Urano") {
+            for (int i = 0; i < MOONS_URANO; ++i) {
+                p.satelites.push_back(crearLuna(4.0f, 3.0f, 0.12f, 0.10f, 0.1f, 0.1f, luna.textura));
+            }
+        }
+        else if (p.nombre == "Neptuno") {
+            for (int i = 0; i < MOONS_NEPTUNO; ++i) {
+                p.satelites.push_back(crearLuna(3.5f, 3.0f, 0.12f, 0.10f, 0.1f, 0.1f, luna.textura));
+            }
+        }
+        else if (p.nombre == "Pluton") {
+            for (int i = 0; i < MOONS_PLUTON; ++i) {
+                p.satelites.push_back(crearLuna(1.2f, 3.0f, 0.10f, 0.10f, 0.1f, 0.1f, luna.textura));
+            }
         }
     }
 
