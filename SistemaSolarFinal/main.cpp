@@ -333,6 +333,12 @@ void display() {
     glEnable(GL_LIGHT0);
     GLfloat light_pos[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
+    GLfloat light_ambient[]  = { 0.3f, 0.3f, 0.3f, 1.0f };
+    GLfloat light_diffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -543,6 +549,10 @@ int main(int argc, char** argv) {
     glutCreateWindow("Sistema Solar FPS - Enrique");
 
     glEnable(GL_DEPTH_TEST);
+    GLfloat globalAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmbient);
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
     srand(static_cast<unsigned int>(time(0)));
 
     texturaSol = LoadBMP("../assets/Sol.bmp");
