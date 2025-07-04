@@ -72,6 +72,7 @@ struct Planeta {
     GLuint textura;
     float angulo;
     float rotacionPropia;
+    int numLunas;
     std::vector<Satelite> satelites;
     std::deque<std::pair<float,float>> estela;
 };
@@ -619,15 +620,15 @@ int main(int argc, char** argv) {
     plutonMoon.textura = luna.textura;
 
 
-    planetas.push_back({ "Mercurio", 12.0f, 0.7f, 0.45f, LoadBMP("../assets/PMercurio.bmp"), 0.0f, 0.5f });
-    planetas.push_back({ "Venus", 22.4f, 1.2f, 0.25f, LoadBMP("../assets/PVenus.bmp"), 0.0f, 0.3f });
-    planetas.push_back({ "Tierra", 31.0f, 1.2f, 0.3f, texturaTierra, 0.0f, 1.0f });
-    planetas.push_back({ "Marte", 47.2f, 0.9f, 0.35f, LoadBMP("../assets/PMarte.bmp"), 0.0f, 0.8f });
-    planetas.push_back({ "Jupiter", 100.3f, 5.0f, 0.1f, LoadBMP("../assets/PJupiter.bmp"), 0.0f, 1.3f });
-    planetas.push_back({ "Saturno", 150.2f, 4.2f, 0.07f, LoadBMP("../assets/PSaturno.bmp"), 0.0f, 1.0f });
-    planetas.push_back({ "Urano", 260.7f, 2.3f, 0.05f, LoadBMP("../assets/PUrano.bmp"), 0.0f, 0.6f });
-    planetas.push_back({ "Neptuno", 280.0f, 2.2f, 0.04f, LoadBMP("../assets/PNeptuno.bmp"), 0.0f, 0.7f });
-    planetas.push_back({ "Pluton", 290.0f, 0.5f, 0.02f, LoadBMP("../assets/PPluton.bmp"), 0.0f, 0.2f });
+    planetas.push_back({ "Mercurio", 12.0f, 0.7f, 0.45f, LoadBMP("../assets/PMercurio.bmp"), 0.0f, 0.5f, 0 });
+    planetas.push_back({ "Venus", 22.4f, 1.2f, 0.25f, LoadBMP("../assets/PVenus.bmp"), 0.0f, 0.3f, 0 });
+    planetas.push_back({ "Tierra", 31.0f, 1.2f, 0.3f, texturaTierra, 0.0f, 1.0f, 1 });
+    planetas.push_back({ "Marte", 47.2f, 0.9f, 0.35f, LoadBMP("../assets/PMarte.bmp"), 0.0f, 0.8f, 2 });
+    planetas.push_back({ "Jupiter", 100.3f, 5.0f, 0.1f, LoadBMP("../assets/PJupiter.bmp"), 0.0f, 1.3f, 95 });
+    planetas.push_back({ "Saturno", 150.2f, 4.2f, 0.07f, LoadBMP("../assets/PSaturno.bmp"), 0.0f, 1.0f, 83 });
+    planetas.push_back({ "Urano", 260.7f, 2.3f, 0.05f, LoadBMP("../assets/PUrano.bmp"), 0.0f, 0.6f, 27 });
+    planetas.push_back({ "Neptuno", 280.0f, 2.2f, 0.04f, LoadBMP("../assets/PNeptuno.bmp"), 0.0f, 0.7f, 14 });
+    planetas.push_back({ "Pluton", 290.0f, 0.5f, 0.02f, LoadBMP("../assets/PPluton.bmp"), 0.0f, 0.2f, 5 });
 
     for (auto& p : planetas) {
         float rad = p.angulo * M_PI / 180.0f;
