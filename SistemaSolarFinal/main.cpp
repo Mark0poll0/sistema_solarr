@@ -104,7 +104,6 @@ Satelite jupiterMoon  = { 6.0f, 0.4f, 0.3f, 0.0f, 0 }; // Jupiter
 Satelite saturnoMoon  = { 5.5f, 0.4f, 0.25f, 0.0f, 0 }; // Saturno
 Satelite uranoMoon    = { 4.0f, 0.3f, 0.2f, 0.0f, 0 }; // Urano
 Satelite neptunoMoon  = { 3.5f, 0.3f, 0.2f, 0.0f, 0 }; // Neptuno
-Satelite plutonMoon   = { 1.2f, 0.15f, 0.15f, 0.0f, 0 }; // Plutón
 
 
 
@@ -617,7 +616,6 @@ int main(int argc, char** argv) {
     saturnoMoon.textura = luna.textura;
     uranoMoon.textura = luna.textura;
     neptunoMoon.textura = luna.textura;
-    plutonMoon.textura = luna.textura;
 
 
     planetas.push_back({ "Mercurio", 12.0f, 0.7f, 0.45f, LoadBMP("../assets/PMercurio.bmp"), 0.0f, 0.5f, 0 });
@@ -628,7 +626,7 @@ int main(int argc, char** argv) {
     planetas.push_back({ "Saturno", 150.2f, 4.2f, 0.07f, LoadBMP("../assets/PSaturno.bmp"), 0.0f, 1.0f, 83 });
     planetas.push_back({ "Urano", 260.7f, 2.3f, 0.05f, LoadBMP("../assets/PUrano.bmp"), 0.0f, 0.6f, 27 });
     planetas.push_back({ "Neptuno", 280.0f, 2.2f, 0.04f, LoadBMP("../assets/PNeptuno.bmp"), 0.0f, 0.7f, 14 });
-    planetas.push_back({ "Pluton", 290.0f, 0.5f, 0.02f, LoadBMP("../assets/PPluton.bmp"), 0.0f, 0.2f, 5 });
+    planetas.push_back({ "Pluton", 290.0f, 0.5f, 0.02f, LoadBMP("../assets/PPluton.bmp"), 0.0f, 0.2f, 0 });
 
     for (auto& p : planetas) {
         float rad = p.angulo * M_PI / 180.0f;
@@ -661,9 +659,6 @@ int main(int argc, char** argv) {
         }
         if (p.nombre == "Neptuno") {
             p.satelites.push_back(neptunoMoon);
-        }
-        if (p.nombre == "Pluton") {
-            p.satelites.push_back(plutonMoon);
         }
     }
 
