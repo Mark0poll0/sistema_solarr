@@ -15,6 +15,8 @@
 #include <cstdio>
 #include <algorithm>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 #include <vector>
 #include <string>
@@ -74,8 +76,16 @@ struct Planeta {
     std::deque<std::pair<float,float>> estela;
 };
 
+struct Asteroide {
+    float distancia;
+    float angulo;
+    float velocidad;
+    float tamano;
+};
+
 
 std::vector<Planeta> planetas;
+std::vector<Asteroide> asteroides;
 
 Satelite luna = { 2.0f, 0.3f, 0.5f, 0.0f, 0 };         // Tierra
 Satelite fobos = { 1.2f, 0.2f, 0.8f, 0.0f, 0 };        // Marte
@@ -221,6 +231,7 @@ void dibujarAnillosSaturnoAvanzado() {
         }
     }
     glEnable(GL_DEPTH_TEST);
+
     glDisable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
@@ -420,6 +431,20 @@ void display() {
         glPopMatrix();
     }
 
+    // --- ASTEROIDES ---
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glColor3f(0.6f, 0.6f, 0.6f);
+    for (const Asteroide& a : asteroides) {
+        glPushMatrix();
+        glRotatef(a.angulo, 0, 1, 0);
+        glTranslatef(a.distancia, 0, 0);
+        glutSolidSphere(a.tamano, 8, 8);
+        glPopMatrix();
+    }
+    glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
+
     // ---------- HUD ----------
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -491,6 +516,11 @@ void idle() {
         }
     }
 
+    for (auto& a : asteroides) {
+        a.angulo += a.velocidad;
+        if (a.angulo >= 360.0f) a.angulo -= 360.0f;
+    }
+
     glutPostRedisplay();
 }
 
@@ -513,6 +543,7 @@ int main(int argc, char** argv) {
     glutCreateWindow("Sistema Solar FPS - Enrique");
 
     glEnable(GL_DEPTH_TEST);
+    srand(static_cast<unsigned int>(time(0)));
 
     texturaSol = LoadBMP("../assets/Sol.bmp");
     texturaTierra = LoadBMP("../assets/PTierra.bmp");
@@ -547,6 +578,15 @@ int main(int argc, char** argv) {
             p.satelites.push_back(fobos);
             p.satelites.push_back(deimos);
         }
+    }
+
+    // === GENERAR CINTURON DE ASTEROIDES ===
+    for (int i = 0; i < 300; ++i) {
+        float distancia = 60.0f + static_cast<float>(rand()) / RAND_MAX * (95.0f - 60.0f);
+        float angulo = static_cast<float>(rand()) / RAND_MAX * 360.0f;
+        float velocidad = 0.1f + static_cast<float>(rand()) / RAND_MAX * 0.2f;
+        float tam = 0.15f + static_cast<float>(rand()) / RAND_MAX * 0.15f;
+        asteroides.push_back({ distancia, angulo, velocidad, tam });
     }
 
     updateCenter();
