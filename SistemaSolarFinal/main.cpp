@@ -580,8 +580,8 @@ int main(int argc, char** argv) {
         }
     }
 
-    // === GENERAR CINTURON DE ASTEROIDES ===
-    for (int i = 0; i < 300; ++i) {
+    // === GENERAR CINTURÓN DE ASTEROIDES (MÁS DENSO) ===
+    for (int i = 0; i < 800; ++i) {
         float distancia = 60.0f + static_cast<float>(rand()) / RAND_MAX * (95.0f - 60.0f);
         float angulo = static_cast<float>(rand()) / RAND_MAX * 360.0f;
         float velocidad = 0.1f + static_cast<float>(rand()) / RAND_MAX * 0.2f;
