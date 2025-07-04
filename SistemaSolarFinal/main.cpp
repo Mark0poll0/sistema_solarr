@@ -97,13 +97,12 @@ std::vector<SolarFlare> flares;
 Satelite luna = { 2.0f, 0.3f, 0.5f, 0.0f, 0 };         // Tierra
 Satelite fobos = { 1.2f, 0.2f, 0.8f, 0.0f, 0 };        // Marte
 Satelite deimos = { 2.0f, 0.15f, 0.5f, 0.0f, 0 };      // Marte
-Satelite mercurioMoon = { 1.1f, 0.1f, 0.8f, 0.0f, 0 }; // Mercurio
-Satelite venusMoon    = { 1.4f, 0.1f, 0.6f, 0.0f, 0 }; // Venus
-Satelite jupiterMoon  = { 6.0f, 0.4f, 0.3f, 0.0f, 0 }; // Jupiter
-Satelite saturnoMoon  = { 5.5f, 0.4f, 0.25f, 0.0f, 0 }; // Saturno
-Satelite uranoMoon    = { 4.0f, 0.3f, 0.2f, 0.0f, 0 }; // Urano
-Satelite neptunoMoon  = { 3.5f, 0.3f, 0.2f, 0.0f, 0 }; // Neptuno
-Satelite plutonMoon   = { 1.2f, 0.15f, 0.15f, 0.0f, 0 }; // Plutón
+
+const int MOONS_JUPITER = 79;
+const int MOONS_SATURNO = 83;
+const int MOONS_URANO   = 27;
+const int MOONS_NEPTUNO = 14;
+const int MOONS_PLUTON  = 5;
 
 
 
@@ -140,6 +139,19 @@ GLuint LoadBMP(const char* filename) {
 
     delete[] data;
     return textureID;
+}
+
+Satelite crearLuna(float distBase, float distVar,
+                   float radioBase, float radioVar,
+                   float velBase, float velVar,
+                   GLuint textura) {
+    Satelite s;
+    s.distancia = distBase + static_cast<float>(rand()) / RAND_MAX * distVar;
+    s.radio = radioBase + static_cast<float>(rand()) / RAND_MAX * radioVar;
+    s.velocidad = velBase + static_cast<float>(rand()) / RAND_MAX * velVar;
+    s.angulo = static_cast<float>(rand()) / RAND_MAX * 360.0f;
+    s.textura = textura;
+    return s;
 }
 
 // ------------------------
@@ -610,13 +622,6 @@ int main(int argc, char** argv) {
     luna.textura = LoadBMP("../assets/SLuna.bmp");
     fobos.textura = LoadBMP("../assets/SPhobos.bmp");
     deimos.textura = LoadBMP("../assets/SDeimos.bmp");
-    mercurioMoon.textura = luna.textura;
-    venusMoon.textura = luna.textura;
-    jupiterMoon.textura = luna.textura;
-    saturnoMoon.textura = luna.textura;
-    uranoMoon.textura = luna.textura;
-    neptunoMoon.textura = luna.textura;
-    plutonMoon.textura = luna.textura;
 
 
     planetas.push_back({ "Mercurio", 12.0f, 0.7f, 0.45f, LoadBMP("../assets/PMercurio.bmp"), 0.0f, 0.5f });
@@ -636,33 +641,37 @@ int main(int argc, char** argv) {
 
     // === ASIGNAR SATÉLITES A PLANETAS ===
     for (auto& p : planetas) {
-        if (p.nombre == "Mercurio") {
-            p.satelites.push_back(mercurioMoon);
-        }
-        if (p.nombre == "Venus") {
-            p.satelites.push_back(venusMoon);
-        }
         if (p.nombre == "Tierra") {
             p.satelites.push_back(luna);
         }
-        if (p.nombre == "Marte") {
+        else if (p.nombre == "Marte") {
             p.satelites.push_back(fobos);
             p.satelites.push_back(deimos);
         }
-        if (p.nombre == "Jupiter") {
-            p.satelites.push_back(jupiterMoon);
+        else if (p.nombre == "Jupiter") {
+            for (int i = 0; i < MOONS_JUPITER; ++i) {
+                p.satelites.push_back(crearLuna(6.0f, 5.0f, 0.15f, 0.15f, 0.1f, 0.2f, luna.textura));
+            }
         }
-        if (p.nombre == "Saturno") {
-            p.satelites.push_back(saturnoMoon);
+        else if (p.nombre == "Saturno") {
+            for (int i = 0; i < MOONS_SATURNO; ++i) {
+                p.satelites.push_back(crearLuna(5.5f, 5.0f, 0.15f, 0.15f, 0.1f, 0.2f, luna.textura));
+            }
         }
-        if (p.nombre == "Urano") {
-            p.satelites.push_back(uranoMoon);
+        else if (p.nombre == "Urano") {
+            for (int i = 0; i < MOONS_URANO; ++i) {
+                p.satelites.push_back(crearLuna(4.0f, 3.0f, 0.12f, 0.10f, 0.1f, 0.1f, luna.textura));
+            }
         }
-        if (p.nombre == "Neptuno") {
-            p.satelites.push_back(neptunoMoon);
+        else if (p.nombre == "Neptuno") {
+            for (int i = 0; i < MOONS_NEPTUNO; ++i) {
+                p.satelites.push_back(crearLuna(3.5f, 3.0f, 0.12f, 0.10f, 0.1f, 0.1f, luna.textura));
+            }
         }
-        if (p.nombre == "Pluton") {
-            p.satelites.push_back(plutonMoon);
+        else if (p.nombre == "Pluton") {
+            for (int i = 0; i < MOONS_PLUTON; ++i) {
+                p.satelites.push_back(crearLuna(1.2f, 3.0f, 0.10f, 0.10f, 0.1f, 0.1f, luna.textura));
+            }
         }
     }
 
