@@ -18,6 +18,8 @@
 
 #include <vector>
 #include <string>
+#include <deque>
+#include <utility>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -69,6 +71,7 @@ struct Planeta {
     float angulo;
     float rotacionPropia;
     std::vector<Satelite> satelites;
+    std::deque<std::pair<float,float>> estela;
 };
 
 
@@ -345,6 +348,16 @@ void display() {
 
     // ---------- PLANETAS Y SATÉLITES ----------
     for (Planeta& p : planetas) {
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_LIGHTING);
+        glColor4f(1.0f, 1.0f, 1.0f, 0.6f);
+        glBegin(GL_LINE_STRIP);
+        for (const auto& pos : p.estela) {
+            glVertex3f(pos.first, 0.0f, pos.second);
+        }
+        glEnd();
+        glEnable(GL_LIGHTING);
+        glEnable(GL_TEXTURE_2D);
         glPushMatrix();
         glRotatef(p.angulo, 0, 1, 0);
         glTranslatef(p.distancia, 0, 0);
@@ -455,6 +468,10 @@ void idle() {
         p.angulo += p.velocidad;
         if (p.angulo >= 360.0f) p.angulo -= 360.0f;
 
+        float rad = p.angulo * M_PI / 180.0f;
+        p.estela.push_back({ cos(rad) * p.distancia, sin(rad) * p.distancia });
+        if (p.estela.size() > 60) p.estela.pop_front();
+
         p.rotacionPropia += 1.5f;  // velocidad de rotación diaria
         if (p.rotacionPropia >= 360.0f) p.rotacionPropia -= 360.0f;
 
@@ -505,6 +522,11 @@ int main(int argc, char** argv) {
     planetas.push_back({ "Urano", 260.7f, 2.3f, 0.05f, LoadBMP("../assets/PUrano.bmp"), 0.0f, 0.6f });
     planetas.push_back({ "Neptuno", 280.0f, 2.2f, 0.04f, LoadBMP("../assets/PNeptuno.bmp"), 0.0f, 0.7f });
     planetas.push_back({ "Pluton", 290.0f, 0.5f, 0.02f, LoadBMP("../assets/PPluton.bmp"), 0.0f, 0.2f });
+
+    for (auto& p : planetas) {
+        float rad = p.angulo * M_PI / 180.0f;
+        p.estela.push_back({ cos(rad) * p.distancia, sin(rad) * p.distancia });
+    }
 
     // === ASIGNAR SATÉLITES A PLANETAS ===
     for (auto& p : planetas) {
