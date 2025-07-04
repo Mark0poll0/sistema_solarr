@@ -348,8 +348,18 @@ void display() {
 
     // ---------- PLANETAS Y SATÉLITES ----------
     for (Planeta& p : planetas) {
+        // Dibuja la órbita completa
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_LIGHTING);
+        glColor4f(0.7f, 0.7f, 0.7f, 0.4f);
+        glBegin(GL_LINE_LOOP);
+        for (int ang = 0; ang < 360; ang += 2) {
+            float rad = ang * M_PI / 180.0f;
+            glVertex3f(cos(rad) * p.distancia, 0.0f, sin(rad) * p.distancia);
+        }
+        glEnd();
+
+        // Estela que deja el planeta al moverse
         glColor4f(1.0f, 1.0f, 1.0f, 0.6f);
         glBegin(GL_LINE_STRIP);
         for (const auto& pos : p.estela) {
@@ -470,7 +480,7 @@ void idle() {
 
         float rad = p.angulo * M_PI / 180.0f;
         p.estela.push_back({ cos(rad) * p.distancia, sin(rad) * p.distancia });
-        if (p.estela.size() > 60) p.estela.pop_front();
+        if (p.estela.size() > 360) p.estela.pop_front();
 
         p.rotacionPropia += 1.5f;  // velocidad de rotación diaria
         if (p.rotacionPropia >= 360.0f) p.rotacionPropia -= 360.0f;
