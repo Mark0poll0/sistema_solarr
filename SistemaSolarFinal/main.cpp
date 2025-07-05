@@ -98,13 +98,11 @@ std::vector<SolarFlare> flares;
 Satelite luna = { 2.0f, 0.3f, 0.5f, 0.0f, 0 };         // Tierra
 Satelite fobos = { 1.2f, 0.2f, 0.8f, 0.0f, 0 };        // Marte
 Satelite deimos = { 2.0f, 0.15f, 0.5f, 0.0f, 0 };      // Marte
-Satelite mercurioMoon = { 1.1f, 0.1f, 0.8f, 0.0f, 0 }; // Mercurio
-Satelite venusMoon    = { 1.4f, 0.1f, 0.6f, 0.0f, 0 }; // Venus
 Satelite jupiterMoon  = { 6.0f, 0.4f, 0.3f, 0.0f, 0 }; // Jupiter
 Satelite saturnoMoon  = { 5.5f, 0.4f, 0.25f, 0.0f, 0 }; // Saturno
 Satelite uranoMoon    = { 4.0f, 0.3f, 0.2f, 0.0f, 0 }; // Urano
 Satelite neptunoMoon  = { 3.5f, 0.3f, 0.2f, 0.0f, 0 }; // Neptuno
-Satelite plutonMoon   = { 1.2f, 0.15f, 0.15f, 0.0f, 0 }; // Plutón
+std::vector<Satelite> saturnoMoons;  // conjunto de lunas para Saturno
 
 
 
@@ -611,24 +609,28 @@ int main(int argc, char** argv) {
     luna.textura = LoadBMP("../assets/SLuna.bmp");
     fobos.textura = LoadBMP("../assets/SPhobos.bmp");
     deimos.textura = LoadBMP("../assets/SDeimos.bmp");
-    mercurioMoon.textura = luna.textura;
-    venusMoon.textura = luna.textura;
     jupiterMoon.textura = luna.textura;
     saturnoMoon.textura = luna.textura;
     uranoMoon.textura = luna.textura;
     neptunoMoon.textura = luna.textura;
-    plutonMoon.textura = luna.textura;
+
+    // Generar ocho satélites para Saturno con distintos ángulos
+    saturnoMoons.resize(8, saturnoMoon);
+    for (int i = 0; i < 8; ++i) {
+        saturnoMoons[i].angulo = 45.0f * i;
+        saturnoMoons[i].distancia = saturnoMoon.distancia + 0.2f * i;
+    }
 
 
     planetas.push_back({ "Mercurio", 12.0f, 0.7f, 0.45f, LoadBMP("../assets/PMercurio.bmp"), 0.0f, 0.5f, 0 });
     planetas.push_back({ "Venus", 22.4f, 1.2f, 0.25f, LoadBMP("../assets/PVenus.bmp"), 0.0f, 0.3f, 0 });
     planetas.push_back({ "Tierra", 31.0f, 1.2f, 0.3f, texturaTierra, 0.0f, 1.0f, 1 });
     planetas.push_back({ "Marte", 47.2f, 0.9f, 0.35f, LoadBMP("../assets/PMarte.bmp"), 0.0f, 0.8f, 2 });
-    planetas.push_back({ "Jupiter", 100.3f, 5.0f, 0.1f, LoadBMP("../assets/PJupiter.bmp"), 0.0f, 1.3f, 95 });
-    planetas.push_back({ "Saturno", 150.2f, 4.2f, 0.07f, LoadBMP("../assets/PSaturno.bmp"), 0.0f, 1.0f, 83 });
-    planetas.push_back({ "Urano", 260.7f, 2.3f, 0.05f, LoadBMP("../assets/PUrano.bmp"), 0.0f, 0.6f, 27 });
-    planetas.push_back({ "Neptuno", 280.0f, 2.2f, 0.04f, LoadBMP("../assets/PNeptuno.bmp"), 0.0f, 0.7f, 14 });
-    planetas.push_back({ "Pluton", 290.0f, 0.5f, 0.02f, LoadBMP("../assets/PPluton.bmp"), 0.0f, 0.2f, 5 });
+    planetas.push_back({ "Jupiter", 100.3f, 5.0f, 0.1f, LoadBMP("../assets/PJupiter.bmp"), 0.0f, 1.3f, 1 });
+    planetas.push_back({ "Saturno", 150.2f, 4.2f, 0.07f, LoadBMP("../assets/PSaturno.bmp"), 0.0f, 1.0f, 8 });
+    planetas.push_back({ "Urano", 260.7f, 2.3f, 0.05f, LoadBMP("../assets/PUrano.bmp"), 0.0f, 0.6f, 1 });
+    planetas.push_back({ "Neptuno", 280.0f, 2.2f, 0.04f, LoadBMP("../assets/PNeptuno.bmp"), 0.0f, 0.7f, 1 });
+    planetas.push_back({ "Pluton", 290.0f, 0.5f, 0.02f, LoadBMP("../assets/PPluton.bmp"), 0.0f, 0.2f, 0 });
 
     for (auto& p : planetas) {
         float rad = p.angulo * M_PI / 180.0f;
@@ -637,12 +639,6 @@ int main(int argc, char** argv) {
 
     // === ASIGNAR SATÉLITES A PLANETAS ===
     for (auto& p : planetas) {
-        if (p.nombre == "Mercurio") {
-            p.satelites.push_back(mercurioMoon);
-        }
-        if (p.nombre == "Venus") {
-            p.satelites.push_back(venusMoon);
-        }
         if (p.nombre == "Tierra") {
             p.satelites.push_back(luna);
         }
@@ -654,16 +650,15 @@ int main(int argc, char** argv) {
             p.satelites.push_back(jupiterMoon);
         }
         if (p.nombre == "Saturno") {
-            p.satelites.push_back(saturnoMoon);
+            for (const auto& s : saturnoMoons) {
+                p.satelites.push_back(s);
+            }
         }
         if (p.nombre == "Urano") {
             p.satelites.push_back(uranoMoon);
         }
         if (p.nombre == "Neptuno") {
             p.satelites.push_back(neptunoMoon);
-        }
-        if (p.nombre == "Pluton") {
-            p.satelites.push_back(plutonMoon);
         }
     }
 
