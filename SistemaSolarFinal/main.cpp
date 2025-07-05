@@ -623,7 +623,8 @@ int main(int argc, char** argv) {
     planetas.push_back({ "Tierra", 31.0f, 1.2f, 0.3f, texturaTierra, 0.0f, 1.0f, 1 });
     planetas.push_back({ "Marte", 47.2f, 0.9f, 0.35f, LoadBMP("../assets/PMarte.bmp"), 0.0f, 0.8f, 2 });
     planetas.push_back({ "Jupiter", 100.3f, 5.0f, 0.1f, LoadBMP("../assets/PJupiter.bmp"), 0.0f, 1.3f, 95 });
-    planetas.push_back({ "Saturno", 150.2f, 4.2f, 0.07f, LoadBMP("../assets/PSaturno.bmp"), 0.0f, 1.0f, 83 });
+    // Se utilizarán 8 lunas visibles para Saturno
+    planetas.push_back({ "Saturno", 150.2f, 4.2f, 0.07f, LoadBMP("../assets/PSaturno.bmp"), 0.0f, 1.0f, 8 });
     planetas.push_back({ "Urano", 260.7f, 2.3f, 0.05f, LoadBMP("../assets/PUrano.bmp"), 0.0f, 0.6f, 27 });
     planetas.push_back({ "Neptuno", 280.0f, 2.2f, 0.04f, LoadBMP("../assets/PNeptuno.bmp"), 0.0f, 0.7f, 14 });
     planetas.push_back({ "Pluton", 290.0f, 0.5f, 0.02f, LoadBMP("../assets/PPluton.bmp"), 0.0f, 0.2f, 0 });
@@ -652,7 +653,12 @@ int main(int argc, char** argv) {
             p.satelites.push_back(jupiterMoon);
         }
         if (p.nombre == "Saturno") {
-            p.satelites.push_back(saturnoMoon);
+            for (int i = 0; i < 8; ++i) {
+                Satelite s = saturnoMoon;
+                s.distancia += i * 0.5f;
+                s.velocidad += i * 0.03f;
+                p.satelites.push_back(s);
+            }
         }
         if (p.nombre == "Urano") {
             p.satelites.push_back(uranoMoon);
